@@ -1,5 +1,4 @@
 #-- encoding: UTF-8
-
 #-- copyright
 # OpenProject is an open source project management software.
 # Copyright (C) 2012-2020 the OpenProject GmbH
@@ -28,19 +27,32 @@
 # See docs/COPYRIGHT.rdoc for more details.
 #++
 module Bim
-  class BasicDataSeeder < ::BasicDataSeeder
-    def data_seeder_classes
-      [
-        ::BasicData::BuiltinRolesSeeder,
-        ::Bim::BasicData::RoleSeeder,
-        ::Bim::BasicData::ActivitySeeder,
-        ::BasicData::ColorSeeder,
-        ::BasicData::ColorSchemeSeeder,
-        ::Bim::BasicData::CustomStyleSeeder,
-        ::Bim::BasicData::WorkflowSeeder,
-        ::Bim::BasicData::PrioritySeeder,
-        ::Bim::BasicData::SettingSeeder
-      ]
+  module BasicData
+    class RoleSeeder < ::BasicData::RoleSeeder
+
+      def member
+        super.tap do |role_data|
+          role_data[:permissions] += %i[view_linked_issues manage_bcf]
+        end
+      end
+
+      def reader
+        super.tap do |role_data|
+          role_data[:permissions] += %i[view_linked_issues]
+        end
+      end
+
+      def non_member
+        super.tap do |role_data|
+          role_data[:permissions] += %i[view_linked_issues]
+        end
+      end
+
+      def anonymous
+        super.tap do |role_data|
+          role_data[:permissions] += %i[view_linked_issues]
+        end
+      end
     end
   end
 end
